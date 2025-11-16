@@ -19,10 +19,16 @@ jobs:
         with:
           submodules: true
           lfs: false
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+
+      - name: Use Node.js 20
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '20' # or '22' if you prefer
+          cache: 'npm'
+
+      - run: npm install
+      - run: npm run build
+
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
@@ -48,5 +54,6 @@ jobs:
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_GENTLE_ISLAND_0DF7E3803 }}
           action: "close"
+
 
 
