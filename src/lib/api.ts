@@ -52,10 +52,30 @@ const getTotalPostsThisYear = async (): Promise<any> => {
     return getTotalSum(data);
 }
 
-export { getDidsFromPDS, getHealthFromPDS, getDescriptionFromPDS, getHandleFromDid, getTotalPostsThisYear };
+const getBlobUsageFromPDS = async (): Promise<string> => {
+    const response = await fetch(`${Config.TOPHHIE_CLOUD_API_URL}/pds/blobStorageUsageBytes`);
+    const data = await response.json();
+    return formatBlobUsageResponse(data);
+}
+
+export { getDidsFromPDS, getHealthFromPDS, getDescriptionFromPDS, getHandleFromDid, getTotalPostsThisYear, getBlobUsageFromPDS };
 
 // Helper Functions
 
 function getTotalSum(data: Record<string, number>): number {
   return Object.values(data).reduce((sum, value) => sum + value, 0);
+}
+
+function formatBlobUsageResponse(data: { usageBytes: string }): string {
+  const bytes = parseInt(data.usageBytes, 10);
+  const units = ["Bytes", "KB", "MB", "GB", "TB"];
+  let size = bytes;
+  let unitIndex = 0;
+
+  while (size >= 1024 && unitIndex < units.length - 1) {
+    size /= 1024;
+    unitIndex++;
+  }
+
+  return `${size.toFixed(2)} ${units[unitIndex]}`;
 }

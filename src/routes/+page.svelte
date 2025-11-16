@@ -4,7 +4,8 @@
   getHealthFromPDS, 
   getDescriptionFromPDS, 
   getHandleFromDid,
-  getTotalPostsThisYear } from '$lib/api';
+  getTotalPostsThisYear,
+  getBlobUsageFromPDS } from '$lib/api';
 	import type { Repo } from '@atproto/api/dist/client/types/com/atproto/sync/listRepos';
 
   let metrics = {
@@ -19,6 +20,8 @@
   let accounts: Repo[] = [];
   let pdsHealth: any;
   let pdsDescription: any;
+  let r2StorageUsage: string = 'Loading...';
+  let totalPostsThisYear: number = 0;
 
   onMount(async () => {
     // Fetch accounts from PDS
@@ -40,6 +43,20 @@
       pdsDescription = await getDescriptionFromPDS();
     } catch (error) {
       console.error('Error fetching PDS description:', error);
+    }
+
+    // Fetch total posts this year
+    try {
+      totalPostsThisYear = await getTotalPostsThisYear();
+    } catch (error) {
+      console.error('Error fetching total posts this year:', error);
+    }
+
+    // Fetch R2 Storage Usage
+    try {
+      r2StorageUsage = await getBlobUsageFromPDS();
+    } catch (error) {
+      console.error('Error fetching R2 storage usage:', error);
     }
   });
 </script>
@@ -88,13 +105,11 @@
     <div class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center bg-gray-800 p-4 rounded-lg">
       <div>
         <p class="text-gray-400 text-xs">Total Posts for {(new Date()).getFullYear()}</p>
-        {#await getTotalPostsThisYear()}
-          <p class="font-semibold">Loading...</p>
-        {:then totalPosts}
-          <p class="font-semibold">{totalPosts}</p>
-        {:catch error}
-          <p class="font-semibold">Error</p>
-        {/await}
+        <p class="font-semibold">{totalPostsThisYear}</p>
+      </div>
+      <div>
+        <p class="text-gray-400 text-xs">Cloudflare R2 Blob Usage</p>
+        <p class="font-semibold">{r2StorageUsage}</p>
       </div>
     </div>
   </section>
