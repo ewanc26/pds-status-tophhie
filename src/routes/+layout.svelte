@@ -6,6 +6,11 @@
 
 <svelte:head>
 	<link rel="icon" href={favicon} />
+	<title>Tophhie Social Server Status</title>
+	<meta
+		name="description"
+		content="Live status, version, account list and storage usage for the tophhie.social AT Protocol PDS."
+	/>
 </svelte:head>
 
 {@render children()}
