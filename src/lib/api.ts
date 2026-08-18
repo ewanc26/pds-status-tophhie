@@ -1,30 +1,9 @@
 import type { Repo } from "@atproto/api/dist/client/types/com/atproto/sync/listRepos";
 import { Config } from "../config";
-import { AtpAgent } from '@atproto/api'
-
-const agent = new AtpAgent({
-  service: Config.PDS_URL,
-})
-
-/**
- * Shapes of the remote responses this module consumes. Every field is optional:
- * these come from a third-party server and must not be assumed present.
- */
-export interface PdsHealth {
-  version?: string;
-}
-
-export interface PdsDescription {
-  did?: string;
-  inviteCodeRequired?: boolean;
-  availableUserDomains?: string[];
-  contact?: { email?: string };
-  links?: { privacyPolicy?: string; termsOfService?: string };
-}
 
 const getDidsFromPDS = async (): Promise<Repo[]> => {
-    const { data } = await agent.com.atproto.sync.listRepos({
-    });
+    const response = await fetch(`${Config.PDS_URL}/xrpc/com.atproto.sync.listRepos`);
+    const data = await response.json();
     return data.repos;
 }
 
